@@ -26,9 +26,22 @@ WORKDIR opt
 RUN \
     wget http://mirror.navercorp.com/apache/tomcat/tomcat-9/v9.0.0.M10/bin/apache-tomcat-9.0.0.M10.tar.gz && \
     tar xzf apache-tomcat-9.0.0.M10.tar.gz && \
-    mv apache-tomcat-9.0.0.M10 tomcat
+    mv apache-tomcat-9.0.0.M10 tomcat && \
+    rm apache-tomcat-9.0.0.M10.tar.gz
 
-ENV TOMCAT_HOME /opt/tomcat9
+ENV TOMCAT_HOME /opt/tomcat
 
-CMD ["bin/startup.sh"]
+RUN \
+    mkdir /app && \
+    mkdir -p /root/temp
+
+ADD conf/server.xml tomcat/conf/server.xml
+ADD conf/tomcat-users.xml tomcat/conf/tomcat-users.xml
+
+VOLUME ["/app","/root/temp"]
+
+EXPOSE 8080
+EXPOSE 8009
+
+CMD ["tomcat/bin/catalina.sh","run"]
 
